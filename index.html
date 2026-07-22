@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NOVA — Premium Store</title>
+<title>ZSHARAD — Premium Store</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  html { scroll-behavior:smooth; }
+  html { scroll-behavior:smooth; scroll-snap-type:y proximity; }
   body {
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
     background:#000; color:#f5f5f7; overflow-x:hidden;
@@ -24,57 +24,52 @@
   }
   .logo { font-size:20px; font-weight:700; letter-spacing:4px; }
   .nav-links { display:flex; gap:36px; list-style:none; }
-  .nav-links a {
-    color:#d5d5d7; text-decoration:none; font-size:13px; letter-spacing:.5px;
-    transition:color .3s;
-  }
+  .nav-links a { color:#d5d5d7; text-decoration:none; font-size:13px; letter-spacing:.5px; transition:color .3s; }
   .nav-links a:hover { color:#fff; }
   .nav-cta {
     background:#fff; color:#000; border:none; padding:8px 20px;
     border-radius:980px; font-size:13px; font-weight:600; cursor:pointer;
-    transition:transform .3s, background .3s;
+    transition:transform .3s, background .3s; position:relative;
   }
   .nav-cta:hover { transform:scale(1.05); background:#e8e8ed; }
+  .cart-badge {
+    position:absolute; top:-8px; right:-8px; background:#ff453a; color:#fff;
+    font-size:11px; width:20px; height:20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-weight:700;
+  }
 
   /* ---------- HERO ---------- */
   .hero {
     height:100vh; display:flex; flex-direction:column;
     justify-content:center; align-items:center; text-align:center;
     background:radial-gradient(ellipse at 50% 120%, #1a1a2e 0%, #000 60%);
-    position:relative;
+    position:relative; scroll-snap-align:start;
   }
   .hero h1 {
-    font-size:clamp(48px,8vw,96px); font-weight:700; letter-spacing:-2px;
+    font-size:clamp(48px,8vw,96px); font-weight:700; letter-spacing:2px;
     background:linear-gradient(180deg,#fff 40%,#8888a0);
     -webkit-background-clip:text; background-clip:text; color:transparent;
     animation:rise 1s ease both;
   }
-  .hero p {
-    font-size:clamp(18px,2.5vw,28px); color:#a1a1a6; margin-top:12px;
-    animation:rise 1s .15s ease both;
-  }
+  .hero p { font-size:clamp(18px,2.5vw,28px); color:#a1a1a6; margin-top:12px; animation:rise 1s .15s ease both; }
   .hero-btns { margin-top:36px; display:flex; gap:16px; animation:rise 1s .3s ease both; }
   .btn {
     padding:14px 34px; border-radius:980px; font-size:16px; font-weight:600;
-    cursor:pointer; text-decoration:none; transition:all .3s;
+    cursor:pointer; text-decoration:none; transition:all .3s; display:inline-block; border:none;
   }
-  .btn-primary { background:#0071e3; color:#fff; border:none; }
+  .btn-primary { background:#0071e3; color:#fff; }
   .btn-primary:hover { background:#0077ed; transform:scale(1.04); }
   .btn-ghost { background:transparent; color:#2997ff; border:1px solid #2997ff; }
   .btn-ghost:hover { background:#2997ff; color:#000; }
-  .scroll-hint {
-    position:absolute; bottom:32px; font-size:12px; color:#6e6e73;
-    animation:bob 2s infinite;
-  }
+  .scroll-hint { position:absolute; bottom:32px; font-size:12px; color:#6e6e73; animation:bob 2s infinite; }
   @keyframes rise { from{opacity:0; transform:translateY(30px)} to{opacity:1; transform:none} }
   @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
 
-  /* ---------- FULLSCREEN PRODUCT PANELS (Tesla style) ---------- */
+  /* ---------- PANELS ---------- */
   .panel {
     height:100vh; display:flex; flex-direction:column;
     justify-content:flex-start; align-items:center; text-align:center;
-    padding-top:14vh; position:relative;
-    background-size:cover; background-position:center;
+    padding-top:14vh; position:relative; scroll-snap-align:start;
   }
   .panel:nth-of-type(odd) { background:linear-gradient(180deg,#0b0b0f,#16161d); }
   .panel:nth-of-type(even){ background:linear-gradient(180deg,#f5f5f7,#e2e2e7); color:#1d1d1f; }
@@ -86,19 +81,16 @@
     margin-top:auto; margin-bottom:8vh; width:min(640px,85vw);
     border-radius:24px; box-shadow:0 40px 80px rgba(0,0,0,.45);
     transition:transform .6s cubic-bezier(.2,.8,.2,1);
+    object-fit:cover; max-height:48vh;
   }
   .panel:hover img.mock { transform:translateY(-10px) scale(1.02); }
 
-  /* reveal on scroll */
   .reveal { opacity:0; transform:translateY(40px); transition:all .8s cubic-bezier(.2,.8,.2,1); }
   .reveal.visible { opacity:1; transform:none; }
 
-  /* ---------- GRID (Apple tiles) ---------- */
+  /* ---------- GRID ---------- */
   .grid-section { padding:80px 24px; background:#000; }
-  .grid {
-    display:grid; gap:16px; max-width:1200px; margin:auto;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  }
+  .grid { display:grid; gap:16px; max-width:1200px; margin:auto; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
   .card {
     background:#111114; border:1px solid rgba(255,255,255,.07);
     border-radius:28px; padding:40px 32px; min-height:340px;
@@ -113,11 +105,132 @@
   .card a { color:#2997ff; text-decoration:none; margin-top:14px; font-size:15px; }
   .card a:hover { text-decoration:underline; }
 
+  /* ---------- CART DRAWER ---------- */
+  .cart-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); opacity:0; pointer-events:none; transition:opacity .4s; z-index:1500; }
+  .cart-overlay.open { opacity:1; pointer-events:auto; }
+  .cart-drawer {
+    position:fixed; top:0; right:-420px; width:min(400px,90vw); height:100vh;
+    background:rgba(20,20,24,.92); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px);
+    border-left:1px solid rgba(255,255,255,.1);
+    z-index:1600; padding:28px; display:flex; flex-direction:column;
+    transition:right .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .cart-drawer.open { right:0; }
+  .cart-head { display:flex; justify-content:space-between; align-items:center; }
+  .cart-head h3 { font-size:22px; }
+  .cart-close { background:none; border:none; color:#fff; font-size:26px; cursor:pointer; }
+  .cart-items { flex:1; overflow-y:auto; margin-top:20px; }
+  .cart-item {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 0; border-bottom:1px solid rgba(255,255,255,.08); animation:rise .4s ease both;
+  }
+  .cart-item .ci-name { font-size:15px; font-weight:600; }
+  .cart-item .ci-price { font-size:13px; color:#a1a1a6; }
+  .ci-remove { background:none; border:none; color:#ff453a; cursor:pointer; font-size:13px; }
+  .cart-empty { color:#6e6e73; text-align:center; margin-top:60px; font-size:14px; }
+  .cart-foot { border-top:1px solid rgba(255,255,255,.12); padding-top:18px; }
+  .cart-total { display:flex; justify-content:space-between; font-size:17px; font-weight:700; margin-bottom:14px; }
+  .checkout-btn {
+    width:100%; padding:15px; border:none; border-radius:14px;
+    background:#0071e3; color:#fff; font-size:16px; font-weight:600; cursor:pointer;
+    transition:background .3s, transform .3s;
+  }
+  .checkout-btn:hover { background:#0077ed; transform:scale(1.02); }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.65);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .4s; z-index:2000;
+  }
+  .modal-overlay.open { opacity:1; pointer-events:auto; }
+  .modal {
+    background:#141418; border:1px solid rgba(255,255,255,.1);
+    border-radius:32px; width:min(880px,92vw); max-height:88vh; overflow-y:auto;
+    transform:scale(.94) translateY(20px); transition:transform .45s cubic-bezier(.2,.8,.2,1);
+    position:relative;
+  }
+  .modal-overlay.open .modal { transform:none; }
+  .modal img { width:100%; height:320px; object-fit:cover; border-radius:32px 32px 0 0; }
+  .modal-body { padding:36px; }
+  .modal-body h2 { font-size:34px; letter-spacing:-1px; }
+  .modal-body .m-price { color:#2997ff; font-size:20px; margin-top:6px; font-weight:600; }
+  .modal-body p.desc { color:#a1a1a6; margin-top:14px; line-height:1.6; }
+  .specs { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-top:24px; }
+  .spec { background:rgba(255,255,255,.05); border-radius:16px; padding:16px; text-align:center; }
+  .spec b { display:block; font-size:20px; }
+  .spec span { font-size:12px; color:#86868b; }
+  .color-row { display:flex; gap:12px; margin-top:24px; }
+  .swatch { width:32px; height:32px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform .2s, border-color .2s; }
+  .swatch.active { border-color:#2997ff; transform:scale(1.15); }
+  .modal-actions { display:flex; gap:14px; margin-top:30px; }
+  .modal-close {
+    position:absolute; top:18px; right:22px; background:rgba(0,0,0,.5);
+    border:none; color:#fff; font-size:20px; width:38px; height:38px;
+    border-radius:50%; cursor:pointer; z-index:1;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  }
+
   /* ---------- FOOTER ---------- */
   footer {
-    padding:48px 24px; text-align:center; color:#6e6e73; font-size:12px;
+    padding:48px 24px; text-align:center; color:#6e6e73; font-size:13px;
     border-top:1px solid rgba(255,255,255,.08); background:#000;
   }
+  .foot-grid { display:flex; gap:60px; justify-content:center; flex-wrap:wrap; text-align:left; }
+  .foot-col h4 { color:#f5f5f7; margin-bottom:12px; }
+  .foot-col a { color:#2997ff; text-decoration:none; }
+  .foot-col p { line-height:1.7; }
+  .sub-form { display:flex; gap:10px; flex-wrap:wrap; }
+  .sub-form input {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    border-radius:980px; padding:12px 18px; color:#fff; font-size:14px; width:220px;
+  }
+  .sub-form input:focus { outline:none; border-color:#2997ff; }
+
+  /* ---------- WHATSAPP FLOAT ---------- */
+  .wa-btn {
+    position:fixed; bottom:26px; left:26px; width:58px; height:58px; z-index:1400;
+    background:#25d366; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(37,211,102,.45); transition:transform .3s;
+  }
+  .wa-btn:hover { transform:scale(1.1); }
+
+  /* ---------- ZS CONNECT CHATBOT ---------- */
+  .zs-fab {
+    position:fixed; bottom:26px; right:26px; z-index:1400;
+    width:58px; height:58px; border-radius:50%; border:none; cursor:pointer;
+    background:linear-gradient(135deg,#0071e3,#2997ff); overflow:hidden;
+    box-shadow:0 8px 24px rgba(0,113,227,.5); transition:transform .3s;
+    font-size:26px; color:#fff;
+  }
+  .zs-fab:hover { transform:scale(1.1); }
+  .zs-fab img { width:100%; height:100%; object-fit:cover; }
+  .zs-chat {
+    position:fixed; bottom:96px; right:26px; z-index:1450;
+    width:min(360px,92vw); height:520px; max-height:70vh;
+    background:rgba(20,20,24,.96); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px);
+    border:1px solid rgba(255,255,255,.12); border-radius:24px;
+    display:flex; flex-direction:column; overflow:hidden;
+    opacity:0; pointer-events:none; transform:translateY(20px) scale(.96);
+    transition:all .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .zs-chat.open { opacity:1; pointer-events:auto; transform:none; }
+  .zs-head { display:flex; align-items:center; gap:12px; padding:14px 16px; background:linear-gradient(135deg,#0071e3,#2997ff); }
+  .zs-head img { width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.6); }
+  .zs-head b { font-size:15px; }
+  .zs-head small { display:block; font-size:11px; opacity:.85; }
+  .zs-body { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; }
+  .zs-msg { max-width:82%; padding:10px 14px; border-radius:18px; font-size:14px; line-height:1.45; animation:rise .3s ease both; white-space:pre-wrap; }
+  .zs-msg.bot { background:rgba(255,255,255,.08); align-self:flex-start; border-bottom-left-radius:6px; }
+  .zs-msg.user { background:#0071e3; align-self:flex-end; border-bottom-right-radius:6px; }
+  .zs-quick { display:flex; flex-wrap:wrap; gap:8px; padding:0 14px 8px; }
+  .zs-quick button { background:transparent; border:1px solid #2997ff; color:#2997ff; border-radius:980px; padding:6px 12px; font-size:12px; cursor:pointer; }
+  .zs-quick button:hover { background:#2997ff; color:#000; }
+  .zs-foot { display:flex; gap:8px; padding:12px; border-top:1px solid rgba(255,255,255,.1); }
+  .zs-foot input { flex:1; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:980px; padding:11px 16px; color:#fff; font-size:14px; }
+  .zs-foot input:focus { outline:none; border-color:#2997ff; }
+  .zs-foot button { background:#0071e3; border:none; color:#fff; border-radius:50%; width:42px; height:42px; cursor:pointer; font-size:16px; }
 
   @media (max-width:768px){
     nav { padding:14px 20px; }
@@ -128,18 +241,18 @@
 <body>
 
 <nav>
-  <div class="logo">NOVA</div>
+  <div class="logo">ZSHARAD</div>
   <ul class="nav-links">
     <li><a href="#one">Phone</a></li>
     <li><a href="#two">Watch</a></li>
     <li><a href="#grid">Accessories</a></li>
-    <li><a href="#">Support</a></li>
+    <li><a href="#contact">Contact</a></li>
   </ul>
-  <button class="nav-cta">Buy Now</button>
+  <button class="nav-cta" id="navCart">Bag</button>
 </nav>
 
 <header class="hero">
-  <h1>NOVA X Pro</h1>
+  <h1>ZSHARAD</h1>
   <p>Beyond fast. Beyond beautiful.</p>
   <div class="hero-btns">
     <a href="#one" class="btn btn-primary">Order Now</a>
@@ -150,12 +263,12 @@
 
 <section class="panel" id="one">
   <div class="reveal">
-    <h2>NOVA Phone</h2>
+    <h2>ZSHARAD Phone</h2>
     <p class="sub">Titanium. Unstoppable.</p>
-    <p class="price">From $999 or $41.62/mo.</p>
+    <p class="price">From ₹82,999</p>
     <div class="panel-btns">
-      <a class="btn btn-primary" href="#">Buy</a>
-      <a class="btn btn-ghost" href="#">Learn more</a>
+      <button class="btn btn-primary" onclick="addToCart('phone')">Buy</button>
+      <button class="btn btn-ghost" onclick="openModal('phone')">Learn more</button>
     </div>
   </div>
   <img class="mock" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200" alt="Phone">
@@ -163,12 +276,12 @@
 
 <section class="panel" id="two">
   <div class="reveal">
-    <h2>NOVA Watch Ultra</h2>
+    <h2>ZSHARAD Watch Ultra</h2>
     <p class="sub">Adventure-ready. Always on.</p>
-    <p class="price">From $399</p>
+    <p class="price">From ₹33,999</p>
     <div class="panel-btns">
-      <a class="btn btn-primary" href="#">Buy</a>
-      <a class="btn btn-ghost" style="color:#0071e3;border-color:#0071e3" href="#">Learn more</a>
+      <button class="btn btn-primary" onclick="addToCart('watch')">Buy</button>
+      <button class="btn btn-ghost" style="color:#0071e3;border-color:#0071e3" onclick="openModal('watch')">Learn more</button>
     </div>
   </div>
   <img class="mock" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=1200" alt="Watch">
@@ -180,40 +293,293 @@
       <span class="tag">New</span>
       <h3>AirBuds Pro</h3>
       <p>Adaptive noise cancellation with spatial audio.</p>
-      <a href="#">Buy $199 →</a>
+      <a href="#" onclick="event.preventDefault(); openModal('buds')">Buy ₹16,999 →</a>
       <div class="emoji">🎧</div>
     </div>
     <div class="card reveal">
       <span class="tag">Best Seller</span>
       <h3>MagCharge</h3>
       <p>Snap-on wireless charging at 25W speeds.</p>
-      <a href="#">Buy $49 →</a>
+      <a href="#" onclick="event.preventDefault(); openModal('charge')">Buy ₹4,199 →</a>
       <div class="emoji">⚡</div>
     </div>
     <div class="card reveal">
       <span class="tag">Limited</span>
       <h3>Nova Book</h3>
       <p>M-class silicon. 22-hour battery life.</p>
-      <a href="#">Buy $1299 →</a>
+      <a href="#" onclick="event.preventDefault(); openModal('book')">Buy ₹1,07,999 →</a>
       <div class="emoji">💻</div>
     </div>
   </div>
 </section>
 
-<footer>© 2026 NOVA Inc. — Designed with precision.</footer>
+<footer id="contact">
+  <div class="foot-grid">
+    <div class="foot-col">
+      <div class="logo" style="margin-bottom:14px">ZSHARAD</div>
+      <p>Uslapur, Bilaspur<br>Chhattisgarh, India — 495001</p>
+      <p style="margin-top:10px">
+        📞 <a href="tel:+918982379366">+91 89823 79366</a><br>
+        ✉️ <a href="mailto:info@zsharad.com">info@zsharad.com</a>
+      </p>
+    </div>
+    <div class="foot-col">
+      <h4>Subscribe for offers</h4>
+      <form class="sub-form" onsubmit="subscribe(event)">
+        <input type="email" id="subEmail" placeholder="Your email" required>
+        <button type="submit" class="btn btn-primary" style="padding:12px 24px">Subscribe</button>
+      </form>
+      <p id="subMsg" style="margin-top:10px;color:#2997ff;font-size:13px"></p>
+    </div>
+  </div>
+  <p style="margin-top:36px">© 2026 ZSHARAD — Uslapur, Bilaspur, Chhattisgarh, India 495001</p>
+</footer>
+
+<!-- WhatsApp float -->
+<a class="wa-btn" href="https://wa.me/918982379366?text=Hi%20ZSHARAD!%20I%20have%20a%20question."
+   target="_blank" title="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" width="30" height="30" fill="#fff"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.6.8 5 2.3 7L4 29l7.2-2.2c1.9 1 4 1.6 6.3 1.6 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 22c-2 0-3.9-.6-5.5-1.6l-.4-.2-4.2 1.3 1.3-4.1-.3-.4C5.7 18.4 5 16.8 5 15 5 9 9.9 4 16 4s11 5 11 11-4.9 10-11 10zm6-7.5c-.3-.2-1.9-1-2.2-1.1-.3-.1-.5-.2-.7.2-.2.3-.8 1.1-1 1.3-.2.2-.4.2-.7.1-1.7-.9-2.9-1.6-4-3.6-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.6-.1-.2-.7-1.8-1-2.4-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.2 3.1 1.3 3.3c.2.2 2.3 3.6 5.6 5 2.1.9 2.9 1 3.9.8.6-.1 1.9-.8 2.1-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.2-.6-.4z"/></svg>
+</a>
+
+<!-- Cart -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart(false)"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-head">
+    <h3>Your Bag</h3>
+    <button class="cart-close" onclick="toggleCart(false)">×</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot">
+    <div class="cart-total"><span>Total</span><span id="cartTotal">₹0</span></div>
+    <button class="checkout-btn" onclick="checkoutWhatsApp()">Check Out on WhatsApp</button>
+  </div>
+</aside>
+
+<!-- Product Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <img id="mImg" src="" alt="">
+    <div class="modal-body">
+      <h2 id="mName"></h2>
+      <div class="m-price" id="mPrice"></div>
+      <p class="desc" id="mDesc"></p>
+      <div class="specs" id="mSpecs"></div>
+      <div class="color-row" id="mColors"></div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="mAdd">Add to Bag</button>
+        <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ZS Connect chatbot -->
+<button class="zs-fab" onclick="toggleChat()" title="ZS Connect">
+  <img src="zs-agent.jpg" alt="ZS Connect" onerror="this.remove()">
+</button>
+
+<div class="zs-chat" id="zsChat">
+  <div class="zs-head">
+    <img src="zs-agent.jpg" alt="" onerror="this.style.display='none'">
+    <div><b>ZS Connect</b><small>ZSHARAD Assistant • Online</small></div>
+  </div>
+  <div class="zs-body" id="zsBody"></div>
+  <div class="zs-quick" id="zsQuick"></div>
+  <div class="zs-foot">
+    <input id="zsInput" placeholder="Type in any language..." onkeydown="if(event.key==='Enter')zsSend()">
+    <button onclick="zsSend()">➤</button>
+  </div>
+</div>
 
 <script>
-  // Scroll reveal
+  // ---- Scroll reveal ----
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => e.isIntersecting && e.target.classList.add('visible'));
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  // Nav shrink on scroll
+  // ---- Nav shrink ----
   const nav = document.querySelector('nav');
   addEventListener('scroll', () => {
     nav.style.background = scrollY > 40 ? 'rgba(0,0,0,.8)' : 'rgba(0,0,0,.55)';
   });
+
+  // ---- Products ----
+  const products = {
+    phone: {
+      name:'ZSHARAD Phone', price:82999,
+      img:'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200',
+      desc:'Aerospace-grade titanium frame, 120Hz ProMotion display, and the fastest chip we\'ve ever built. All-day battery, all-night camera.',
+      specs:[['6.7\u2033','Display'],['48MP','Camera'],['29h','Battery'],['5G','Network']],
+      colors:['#3a3a3f','#c9c9ce','#26476b','#6b2635']
+    },
+    watch: {
+      name:'ZSHARAD Watch Ultra', price:33999,
+      img:'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=1200',
+      desc:'Built for the edge of everything. Dual-frequency GPS, 100m water resistance, and a display bright enough for high noon.',
+      specs:[['49mm','Case'],['36h','Battery'],['100m','Water'],['GPS','Dual-band']],
+      colors:['#2e2e33','#d9d9de','#c77b3a']
+    },
+    buds: {
+      name:'AirBuds Pro', price:16999,
+      img:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=1200',
+      desc:'Adaptive noise cancellation, spatial audio, and six hours of pure immersion per charge.',
+      specs:[['ANC','Audio'],['6h','Battery'],['IPX4','Sweat'],['USB-C','Charge']],
+      colors:['#f5f5f7','#2e2e33']
+    },
+    charge: {
+      name:'MagCharge', price:4199,
+      img:'https://images.unsplash.com/photo-1615526675159-e248c3021d3f?w=1200',
+      desc:'Snap on. Power up. 25W wireless charging with perfect alignment every time.',
+      specs:[['25W','Speed'],['Qi2','Standard'],['1.5m','Cable'],['Snap','Magnetic']],
+      colors:['#f5f5f7','#2e2e33']
+    },
+    book: {
+      name:'Nova Book', price:107999,
+      img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200',
+      desc:'M-class silicon meets a liquid-crystal 14\u2033 canvas. 22 hours of battery. Zero compromises.',
+      specs:[['14\u2033','Display'],['22h','Battery'],['16GB','Memory'],['1TB','Storage']],
+      colors:['#c9c9ce','#3a3a3f','#26476b']
+    }
+  };
+
+  // ---- Cart (localStorage) ----
+  let cart = JSON.parse(localStorage.getItem('zsCart') || '[]');
+  const drawer = document.getElementById('cartDrawer');
+  const overlay = document.getElementById('cartOverlay');
+
+  function toggleCart(open) {
+    drawer.classList.toggle('open', open);
+    overlay.classList.toggle('open', open);
+  }
+  function saveCart() { localStorage.setItem('zsCart', JSON.stringify(cart)); }
+  function addToCart(key) { cart.push(key); saveCart(); renderCart(); toggleCart(true); }
+  function removeFromCart(i) { cart.splice(i,1); saveCart(); renderCart(); }
+  function renderCart() {
+    const box = document.getElementById('cartItems');
+    if (!cart.length) {
+      box.innerHTML = '<div class="cart-empty">Your bag is empty.</div>';
+    } else {
+      box.innerHTML = cart.map((k,i)=>`
+        <div class="cart-item">
+          <div>
+            <div class="ci-name">${products[k].name}</div>
+            <div class="ci-price">₹${products[k].price.toLocaleString('en-IN')}</div>
+          </div>
+          <button class="ci-remove" onclick="removeFromCart(${i})">Remove</button>
+        </div>`).join('');
+    }
+    const total = cart.reduce((s,k)=>s+products[k].price,0);
+    document.getElementById('cartTotal').textContent = '₹'+total.toLocaleString('en-IN');
+    let badge = document.querySelector('.cart-badge');
+    if (cart.length) {
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'cart-badge';
+        document.getElementById('navCart').appendChild(badge);
+      }
+      badge.textContent = cart.length;
+    } else if (badge) badge.remove();
+  }
+  document.getElementById('navCart').onclick = () => toggleCart(true);
+
+  // Checkout sends order to your WhatsApp
+  function checkoutWhatsApp() {
+    if (!cart.length) return alert('Your bag is empty!');
+    const items = cart.map(k=>`• ${products[k].name} — ₹${products[k].price.toLocaleString('en-IN')}`).join('%0A');
+    const total = cart.reduce((s,k)=>s+products[k].price,0);
+    window.open(`https://wa.me/918982379366?text=Hi ZSHARAD! I want to order:%0A${items}%0A%0ATotal: ₹${total.toLocaleString('en-IN')}`,'_blank');
+  }
+
+  // ---- Modal ----
+  const mo = document.getElementById('modalOverlay');
+  let currentKey = null;
+  function openModal(key) {
+    const p = products[key]; currentKey = key;
+    document.getElementById('mImg').src = p.img;
+    document.getElementById('mName').textContent = p.name;
+    document.getElementById('mPrice').textContent = '₹' + p.price.toLocaleString('en-IN');
+    document.getElementById('mDesc').textContent = p.desc;
+    document.getElementById('mSpecs').innerHTML = p.specs.map(s =>
+      `<div class="spec"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
+    document.getElementById('mColors').innerHTML = p.colors.map((c,i) =>
+      `<div class="swatch ${i===0?'active':''}" style="background:${c}" onclick="pickColor(this)"></div>`).join('');
+    document.getElementById('mAdd').onclick = () => { addToCart(currentKey); closeModal(); };
+    mo.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() { mo.classList.remove('open'); document.body.style.overflow = ''; }
+  mo.addEventListener('click', e => { if (e.target === mo) closeModal(); });
+  function pickColor(el) {
+    el.parentElement.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); toggleCart(false); } });
+
+  // ---- Subscribe ----
+  function subscribe(e) {
+    e.preventDefault();
+    const email = document.getElementById('subEmail').value;
+    location.href = 'mailto:info@zsharad.com?subject=New Subscription&body=Please subscribe: ' + email;
+    document.getElementById('subMsg').textContent = '✓ Thank you for subscribing!';
+    document.getElementById('subEmail').value = '';
+  }
+
+  // ---- ZS Connect (AI-powered) ----
+  let zsHistory = [];
+  const zsQuickBtns = ['Products', 'Prices', 'Delivery', 'Contact'];
+
+  function toggleChat() {
+    const c = document.getElementById('zsChat');
+    const opening = !c.classList.contains('open');
+    c.classList.toggle('open');
+    if (opening && !document.getElementById('zsBody').children.length) {
+      addMsg("Hi! I'm ZS Connect 👋 Ask me anything — in any language!", 'bot');
+      document.getElementById('zsQuick').innerHTML = zsQuickBtns
+        .map(q=>`<button onclick="quickAsk('${q}')">${q}</button>`).join('');
+    }
+  }
+  function addMsg(text, who) {
+    const d = document.createElement('div');
+    d.className = 'zs-msg ' + who;
+    d.textContent = text;
+    const body = document.getElementById('zsBody');
+    body.appendChild(d);
+    body.scrollTop = body.scrollHeight;
+    return d;
+  }
+  function quickAsk(q) {
+    document.getElementById('zsInput').value = 'Tell me about ' + q.toLowerCase();
+    zsSend();
+  }
+  async function zsSend() {
+    const inp = document.getElementById('zsInput');
+    const msg = inp.value.trim();
+    if (!msg) return;
+    addMsg(msg, 'user');
+    inp.value = '';
+    zsHistory.push({ role: 'user', content: msg });
+
+    const typing = addMsg('•••', 'bot');
+    try {
+      const r = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: zsHistory })
+      });
+      const data = await r.json();
+      typing.remove();
+      addMsg(data.reply, 'bot');
+      zsHistory.push({ role: 'assistant', content: data.reply });
+    } catch {
+      typing.remove();
+      addMsg('Connection issue 😅 Please WhatsApp us: +91 89823 79366', 'bot');
+    }
+  }
+
+  renderCart();
 </script>
 </body>
 </html>
