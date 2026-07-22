@@ -1,1 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA — Premium Store</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+    background:#000; color:#f5f5f7; overflow-x:hidden;
+  }
 
+  /* ---------- NAV ---------- */
+  nav {
+    position:fixed; top:0; width:100%; z-index:1000;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 48px;
+    background:rgba(0,0,0,.55);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .logo { font-size:20px; font-weight:700; letter-spacing:4px; }
+  .nav-links { display:flex; gap:36px; list-style:none; }
+  .nav-links a {
+    color:#d5d5d7; text-decoration:none; font-size:13px; letter-spacing:.5px;
+    transition:color .3s;
+  }
+  .nav-links a:hover { color:#fff; }
+  .nav-cta {
+    background:#fff; color:#000; border:none; padding:8px 20px;
+    border-radius:980px; font-size:13px; font-weight:600; cursor:pointer;
+    transition:transform .3s, background .3s;
+  }
+  .nav-cta:hover { transform:scale(1.05); background:#e8e8ed; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    height:100vh; display:flex; flex-direction:column;
+    justify-content:center; align-items:center; text-align:center;
+    background:radial-gradient(ellipse at 50% 120%, #1a1a2e 0%, #000 60%);
+    position:relative;
+  }
+  .hero h1 {
+    font-size:clamp(48px,8vw,96px); font-weight:700; letter-spacing:-2px;
+    background:linear-gradient(180deg,#fff 40%,#8888a0);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:rise 1s ease both;
+  }
+  .hero p {
+    font-size:clamp(18px,2.5vw,28px); color:#a1a1a6; margin-top:12px;
+    animation:rise 1s .15s ease both;
+  }
+  .hero-btns { margin-top:36px; display:flex; gap:16px; animation:rise 1s .3s ease both; }
+  .btn {
+    padding:14px 34px; border-radius:980px; font-size:16px; font-weight:600;
+    cursor:pointer; text-decoration:none; transition:all .3s;
+  }
+  .btn-primary { background:#0071e3; color:#fff; border:none; }
+  .btn-primary:hover { background:#0077ed; transform:scale(1.04); }
+  .btn-ghost { background:transparent; color:#2997ff; border:1px solid #2997ff; }
+  .btn-ghost:hover { background:#2997ff; color:#000; }
+  .scroll-hint {
+    position:absolute; bottom:32px; font-size:12px; color:#6e6e73;
+    animation:bob 2s infinite;
+  }
+  @keyframes rise { from{opacity:0; transform:translateY(30px)} to{opacity:1; transform:none} }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+
+  /* ---------- FULLSCREEN PRODUCT PANELS (Tesla style) ---------- */
+  .panel {
+    height:100vh; display:flex; flex-direction:column;
+    justify-content:flex-start; align-items:center; text-align:center;
+    padding-top:14vh; position:relative;
+    background-size:cover; background-position:center;
+  }
+  .panel:nth-of-type(odd) { background:linear-gradient(180deg,#0b0b0f,#16161d); }
+  .panel:nth-of-type(even){ background:linear-gradient(180deg,#f5f5f7,#e2e2e7); color:#1d1d1f; }
+  .panel h2 { font-size:clamp(36px,5vw,56px); font-weight:700; letter-spacing:-1px; }
+  .panel .sub { font-size:18px; margin-top:8px; opacity:.7; }
+  .panel .price { margin-top:6px; font-size:15px; opacity:.55; }
+  .panel-btns { margin-top:26px; display:flex; gap:14px; }
+  .panel img.mock {
+    margin-top:auto; margin-bottom:8vh; width:min(640px,85vw);
+    border-radius:24px; box-shadow:0 40px 80px rgba(0,0,0,.45);
+    transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  }
+  .panel:hover img.mock { transform:translateY(-10px) scale(1.02); }
+
+  /* reveal on scroll */
+  .reveal { opacity:0; transform:translateY(40px); transition:all .8s cubic-bezier(.2,.8,.2,1); }
+  .reveal.visible { opacity:1; transform:none; }
+
+  /* ---------- GRID (Apple tiles) ---------- */
+  .grid-section { padding:80px 24px; background:#000; }
+  .grid {
+    display:grid; gap:16px; max-width:1200px; margin:auto;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  }
+  .card {
+    background:#111114; border:1px solid rgba(255,255,255,.07);
+    border-radius:28px; padding:40px 32px; min-height:340px;
+    display:flex; flex-direction:column; position:relative; overflow:hidden;
+    transition:transform .4s, border-color .4s;
+  }
+  .card:hover { transform:translateY(-8px); border-color:rgba(255,255,255,.25); }
+  .card .tag { font-size:12px; letter-spacing:2px; color:#2997ff; text-transform:uppercase; }
+  .card h3 { font-size:26px; margin-top:10px; font-weight:700; }
+  .card p { margin-top:8px; color:#a1a1a6; font-size:15px; line-height:1.5; }
+  .card .emoji { font-size:72px; margin-top:auto; align-self:flex-end; filter:drop-shadow(0 10px 20px rgba(0,113,227,.35)); }
+  .card a { color:#2997ff; text-decoration:none; margin-top:14px; font-size:15px; }
+  .card a:hover { text-decoration:underline; }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    padding:48px 24px; text-align:center; color:#6e6e73; font-size:12px;
+    border-top:1px solid rgba(255,255,255,.08); background:#000;
+  }
+
+  @media (max-width:768px){
+    nav { padding:14px 20px; }
+    .nav-links { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">NOVA</div>
+  <ul class="nav-links">
+    <li><a href="#one">Phone</a></li>
+    <li><a href="#two">Watch</a></li>
+    <li><a href="#grid">Accessories</a></li>
+    <li><a href="#">Support</a></li>
+  </ul>
+  <button class="nav-cta">Buy Now</button>
+</nav>
+
+<header class="hero">
+  <h1>NOVA X Pro</h1>
+  <p>Beyond fast. Beyond beautiful.</p>
+  <div class="hero-btns">
+    <a href="#one" class="btn btn-primary">Order Now</a>
+    <a href="#grid" class="btn btn-ghost">Explore</a>
+  </div>
+  <div class="scroll-hint">▼ Scroll to discover</div>
+</header>
+
+<section class="panel" id="one">
+  <div class="reveal">
+    <h2>NOVA Phone</h2>
+    <p class="sub">Titanium. Unstoppable.</p>
+    <p class="price">From $999 or $41.62/mo.</p>
+    <div class="panel-btns">
+      <a class="btn btn-primary" href="#">Buy</a>
+      <a class="btn btn-ghost" href="#">Learn more</a>
+    </div>
+  </div>
+  <img class="mock" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200" alt="Phone">
+</section>
+
+<section class="panel" id="two">
+  <div class="reveal">
+    <h2>NOVA Watch Ultra</h2>
+    <p class="sub">Adventure-ready. Always on.</p>
+    <p class="price">From $399</p>
+    <div class="panel-btns">
+      <a class="btn btn-primary" href="#">Buy</a>
+      <a class="btn btn-ghost" style="color:#0071e3;border-color:#0071e3" href="#">Learn more</a>
+    </div>
+  </div>
+  <img class="mock" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=1200" alt="Watch">
+</section>
+
+<section class="grid-section" id="grid">
+  <div class="grid">
+    <div class="card reveal">
+      <span class="tag">New</span>
+      <h3>AirBuds Pro</h3>
+      <p>Adaptive noise cancellation with spatial audio.</p>
+      <a href="#">Buy $199 →</a>
+      <div class="emoji">🎧</div>
+    </div>
+    <div class="card reveal">
+      <span class="tag">Best Seller</span>
+      <h3>MagCharge</h3>
+      <p>Snap-on wireless charging at 25W speeds.</p>
+      <a href="#">Buy $49 →</a>
+      <div class="emoji">⚡</div>
+    </div>
+    <div class="card reveal">
+      <span class="tag">Limited</span>
+      <h3>Nova Book</h3>
+      <p>M-class silicon. 22-hour battery life.</p>
+      <a href="#">Buy $1299 →</a>
+      <div class="emoji">💻</div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 NOVA Inc. — Designed with precision.</footer>
+
+<script>
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => e.isIntersecting && e.target.classList.add('visible'));
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Nav shrink on scroll
+  const nav = document.querySelector('nav');
+  addEventListener('scroll', () => {
+    nav.style.background = scrollY > 40 ? 'rgba(0,0,0,.8)' : 'rgba(0,0,0,.55)';
+  });
+</script>
+</body>
+</html>
