@@ -10,6 +10,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </title>
 <style>
+ .logo-img { height:34px; width:auto; display:block; }
+.hero-logo { width:min(320px,70vw); margin-bottom:10px; animation:rise 1s ease both; }
+.foot-logo { height:40px; margin-bottom:14px; }
+/* Logo is red on white — give it a white pill background on dark areas */
+.logo-chip { background:#fff; border-radius:10px; padding:6px 12px; display:inline-block; }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior:smooth; scroll-snap-type:y proximity; }
   body {
@@ -246,7 +251,7 @@
 <body>
 
 <nav>
-  <div class="logo">ZSHARAD</div>
+  <div <a href="#" class="logo-chip"><img src="ZSHARAD.512.png" alt="ZSHARAD" class="logo-img"></a>div>
   <ul class="nav-links">
     <li><a href="#one">Phone</a></li>
     <li><a href="#two">Watch</a></li>
